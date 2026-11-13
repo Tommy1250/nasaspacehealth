@@ -19,6 +19,9 @@ router.get("/login", (req, res) => {
 const auth = require("./auth");
 router.use("/auth", auth);
 
+const astro = require("./astro");
+router.use("/astro", astro);
+
 router.use((req, res) => {
     res.status(404).sendFile(path.join(__dirname, "..", "views", "404.html"));
 });
