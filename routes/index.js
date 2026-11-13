@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const path = require("path");
 
+const {userExist} = require("../functions/user");
+
 router.get("/", (req, res) => {
     if (userExist(req.headers.cookie)) res.sendFile(path.join(__dirname, "..", "views", "index.html"));
     else res.redirect("/login");
