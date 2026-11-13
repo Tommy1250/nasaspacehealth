@@ -7,7 +7,11 @@ const fs = require("fs");
 const path = require("path");
 
 const router = express.Router();
-
+// router.get("/logout", (req, res) => {
+//     // مسح الكوكي من المتصفح فقط دون المساس بملف users.json
+//     res.clearCookie("session");
+//     res.redirect("/login");
+// });
 router.post("/login", (req, res) => {
     const users = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "database", "users.json"), "utf-8"));
     

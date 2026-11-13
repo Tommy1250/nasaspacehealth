@@ -1,13 +1,357 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home page - nasa health</title>
-    <script src="index.js" defer></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#071426" />
+  <title>ASTRA MED | Crew Health Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css" />
+  
+  <!-- Three.js + GLTFLoader + Decoders (Draco & Meshopt) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meshoptimizer@0.20.0/meshopt_decoder.js"></script>
+  
+  <script src="/index.js" defer></script>
 </head>
-<body>
-    <h1>Hello world</h1>
+<body class="dashboard-page">
+
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="/"><span class="brand-mark">✳</span><span>ASTRA<span class="brand-light">MED</span></span></a>
+      <div class="sidebar-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <a class="nav-link active" href="#overview"><span>▦</span> Overview</a>
+        <a class="nav-link" href="#health-check"><span>♡</span> Health check</a>
+        <a class="nav-link" href="#guides"><span>▤</span> Crew guides</a>
+        <a class="nav-link" href="#treatments"><span>✚</span> Treatments</a>
+        <a class="nav-link" href="#body3d"><span>◉</span> 3D Body Map</a>
+        <a class="nav-link emergency-nav" href="#emergency"><span>⚠</span> Emergency center</a>
+      </nav>
+      <div class="sidebar-spacer"></div>
+      <div class="mission-card">
+        <div class="mission-icon">⌁</div>
+        <div class="sidebar-label">CURRENT MISSION</div>
+        <strong>Artemis / Deep Space</strong>
+        <span>Simulation environment</span>
+        <div class="mission-progress"><i></i></div>
+        <small>MISSION STATUS <b>ACTIVE</b></small>
+      </div>
+      <div class="sidebar-user">
+        <div class="avatar" id="userAvatar">CR</div>
+        <div class="user-meta"><strong id="sidebarUsername">Crew member</strong><span>Flight crew</span></div>
+        <button id="logoutBtn" class="icon-button" title="Sign out" aria-label="Sign out">↗</button>
+      </div>
+    </aside>
+
+    <main class="main-content" id="overview">
+      <header class="topbar">
+        <button class="mobile-menu icon-button" id="menuBtn" aria-label="Open menu">☰</button>
+        <div class="breadcrumb">MISSION CONTROL <span>/</span> <b>CREW HEALTH</b></div>
+        <div class="topbar-right">
+          <div class="system-status"><span class="live-dot"></span> LIVE <span id="pollStatus" class="poll-status">· syncing</span></div>
+          <div class="topbar-divider"></div>
+          <div class="top-date" id="currentDate">MISSION DAY 001</div>
+        </div>
+      </header>
+
+      <section class="welcome-row">
+        <div>
+          <div class="eyebrow muted">CREW HEALTH MONITORING <span class="tiny-dot"></span> LIVE SESSION</div>
+          <h1>Good to have you here, <span id="welcomeName">Commander</span>.</h1>
+          <p class="subheading">Your health is mission-critical. Limits adapt to the selected environment.</p>
+        </div>
+        <div class="environment-select">
+          <label for="environment">MISSION ENVIRONMENT</label>
+          <select id="environment">
+            <option value="spacecraft">◈ Spacecraft</option>
+            <option value="station">◎ Space station</option>
+            <option value="lunar">◒ Lunar base</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="alert-banner" id="healthBanner">
+        <div class="alert-symbol">✳</div>
+        <div class="alert-copy">
+          <strong id="bannerTitle">Your dashboard is ready</strong>
+          <span id="bannerText">Review your latest readings and complete your daily health check.</span>
+        </div>
+        <span class="banner-tag" id="bannerTag">CREW STATUS</span>
+      </section>
+
+      <section class="section-heading">
+        <div>
+          <div class="eyebrow muted">01 / VITALS & WELLBEING</div>
+          <h2>Health snapshot</h2>
+        </div>
+        <button class="text-button" id="refreshBtn">↻ Refresh readings</button>
+      </section>
+
+      <section class="metrics-grid" aria-label="Health readings">
+        <article class="metric-card live-card">
+          <div class="metric-top">
+            <span class="metric-icon coral pulse-icon">♡</span>
+            <span class="metric-label">HEART RATE</span>
+            <span class="metric-state" id="bpmState">—</span>
+          </div>
+          <div class="metric-value">
+            <strong id="bpmValue" class="live-value">--</strong><span>BPM</span>
+          </div>
+          <div class="ecg-wrap">
+            <canvas id="ecgCanvas" width="280" height="48" aria-hidden="true"></canvas>
+          </div>
+          <div class="metric-bottom">
+            <span>Beats per minute · live</span>
+            <span class="metric-range" id="bpmRange">60–100 <i>ref</i></span>
+          </div>
+          <div class="danger-bar" id="bpmDangerBar"><i></i></div>
+        </article>
+
+        <article class="metric-card live-card">
+          <div class="metric-top">
+            <span class="metric-icon cyan">◉</span>
+            <span class="metric-label">OXYGEN / RESPIRATION</span>
+            <span class="metric-state" id="spo2State">—</span>
+          </div>
+          <div class="metric-value">
+            <strong id="spo2Value" class="live-value">--</strong><span>% SpO₂</span>
+          </div>
+          <div class="resp-wrap">
+            <div class="resp-wave" id="respWave"></div>
+            <div class="resp-rate"><span id="respRateValue">--</span> <small>breaths/min (est.)</small></div>
+          </div>
+          <div class="metric-bottom">
+            <span>Blood oxygen · breathing cycle</span>
+            <span class="metric-range" id="spo2Range">95–100% <i>ref</i></span>
+          </div>
+          <div class="danger-bar" id="spo2DangerBar"><i></i></div>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-top">
+            <span class="metric-icon amber">♨</span>
+            <span class="metric-label">BODY TEMPERATURE</span>
+            <span class="metric-state" id="tempState">—</span>
+          </div>
+          <div class="metric-value"><strong id="tempValue">--</strong><span>°C</span></div>
+          <div class="metric-bottom">
+            <span>Core temperature</span>
+            <span class="metric-range" id="tempRange">36.1–37.2 <i>ref</i></span>
+          </div>
+          <div class="temp-scale"><i id="tempScaleFill"></i></div>
+          <div class="danger-bar" id="tempDangerBar"><i></i></div>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-top">
+            <span class="metric-icon violet">◷</span>
+            <span class="metric-label">SLEEP DURATION</span>
+            <span class="metric-state" id="sleepState">—</span>
+          </div>
+          <div class="metric-value"><strong id="sleepValue">--</strong><span>HRS</span></div>
+          <div class="metric-bottom">
+            <span>Last sleep period</span>
+            <span class="metric-range" id="sleepRange">7–9 hrs <i>target</i></span>
+          </div>
+          <div class="sleep-track"><i id="sleepTrack"></i></div>
+          <div class="danger-bar" id="sleepDangerBar"><i></i></div>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-top">
+            <span class="metric-icon blue">◌</span>
+            <span class="metric-label">HYDRATION</span>
+            <span class="metric-state" id="hydrationState">—</span>
+          </div>
+          <div class="metric-value"><strong id="hydrationValue">--</strong><span>%</span></div>
+          <div class="metric-bottom">
+            <span>Hydration index</span>
+            <span class="metric-range" id="hydrationRange">70–100% <i>target</i></span>
+          </div>
+          <div class="metric-track"><i id="hydrationTrack"></i></div>
+          <div class="danger-bar" id="hydrationDangerBar"><i></i></div>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-top">
+            <span class="metric-icon green">☼</span>
+            <span class="metric-label">RADIATION EXPOSURE</span>
+            <span class="metric-state" id="radiationState">—</span>
+          </div>
+          <div class="metric-value"><strong id="radiationValue">--</strong><span>mSv</span></div>
+          <div class="metric-bottom">
+            <span>Recorded exposure index</span>
+            <span class="metric-range" id="radiationRange">Cumulative <i>record</i></span>
+          </div>
+          <div class="metric-track radiation-track"><i id="radiationTrack"></i></div>
+          <div class="danger-bar" id="radiationDangerBar"><i></i></div>
+        </article>
+      </section>
+
+      <p class="data-note"><span>ⓘ</span> Readings poll the backend every few seconds. Reference ranges and danger limits change with mission environment (spacecraft / station / lunar). Educational only — not a diagnosis.</p>
+
+      <section class="limits-panel" id="limitsPanel">
+        <div class="panel-heading">
+          <div>
+            <div class="eyebrow muted">ENVIRONMENT LIMITS</div>
+            <h2 id="limitsTitle">Spacecraft thresholds</h2>
+          </div>
+        </div>
+        <div class="limits-grid" id="limitsGrid"></div>
+      </section>
+
+      <section class="lower-grid" id="health-check">
+        <article class="panel check-panel">
+          <div class="panel-heading">
+            <div>
+              <div class="eyebrow muted">02 / DAILY ROUTINE</div>
+              <h2>Daily health check</h2>
+            </div>
+            <span class="panel-icon">✓</span>
+          </div>
+          <p class="panel-description">Update your measurements to keep your crew health record current.</p>
+          <form id="healthForm" class="health-form">
+            <div class="form-grid">
+              <div class="field"><label for="bpmInput">Heart rate <small>BPM</small></label><input id="bpmInput" name="bpm" type="number" min="1" max="250" placeholder="e.g. 72"></div>
+              <div class="field"><label for="spo2Input">Oxygen saturation <small>%</small></label><input id="spo2Input" name="spo2" type="number" min="1" max="100" placeholder="e.g. 98"></div>
+              <div class="field"><label for="tempInput">Body temperature <small>°C</small></label><input id="tempInput" name="temp" type="number" min="1" max="50" step="0.1" placeholder="e.g. 36.8"></div>
+              <div class="field"><label for="sleepInput">Sleep duration <small>hours</small></label><input id="sleepInput" name="sleep" type="number" min="0" max="24" step="0.5" placeholder="e.g. 8"></div>
+              <div class="field"><label for="hydrationInput">Hydration index <small>%</small></label><input id="hydrationInput" name="hydration" type="number" min="1" max="100" placeholder="e.g. 85"></div>
+              <div class="field"><label for="radiationInput">Radiation record <small>mSv</small></label><input id="radiationInput" name="radiation" type="number" min="0" max="4" step="0.01" placeholder="e.g. 0.20"></div>
+            </div>
+            <div class="form-actions">
+              <span id="saveMessage" class="save-message" role="status"></span>
+              <button class="btn btn-primary" type="submit">Save health record <span>→</span></button>
+            </div>
+          </form>
+        </article>
+
+        <article class="panel guide-panel" id="guides">
+          <div class="panel-heading">
+            <div>
+              <div class="eyebrow muted">03 / CREW EDUCATION</div>
+              <h2>Measurement guide</h2>
+            </div>
+            <span class="panel-icon">⌘</span>
+          </div>
+          <p class="panel-description">Not sure how to take a measurement? Follow these quick steps.</p>
+          <div class="guide-list">
+            <button class="guide-item" data-guide="heart"><span class="guide-icon coral">♡</span><span><strong>Measure your heart rate</strong><small>Find your pulse and count beats for 60 seconds.</small></span><span class="guide-arrow">↗</span></button>
+            <button class="guide-item" data-guide="oxygen"><span class="guide-icon cyan">◉</span><span><strong>Check blood oxygen</strong><small>Use a pulse oximeter on a warm, still finger.</small></span><span class="guide-arrow">↗</span></button>
+            <button class="guide-item" data-guide="temperature"><span class="guide-icon amber">♨</span><span><strong>Take your temperature</strong><small>Use the approved mission thermometer.</small></span><span class="guide-arrow">↗</span></button>
+            <button class="guide-item" data-guide="hydration"><span class="guide-icon blue">◌</span><span><strong>Review hydration</strong><small>Follow the mission's fluid-intake protocol.</small></span><span class="guide-arrow">↗</span></button>
+          </div>
+        </article>
+      </section>
+
+      <section class="section-heading" id="treatments">
+        <div>
+          <div class="eyebrow muted">04 / TREATMENT PROTOCOLS</div>
+          <h2>How to take treatment</h2>
+        </div>
+      </section>
+      <section class="treatments-grid" id="treatmentsGrid"></section>
+
+      <section class="section-heading" id="body3d">
+        <div>
+          <div class="eyebrow muted">05 / 3D BODY MAP</div>
+          <h2>Interactive crew model</h2>
+        </div>
+        <div class="view-controls">
+          <button class="chip active" data-view="full">Astronaut</button>
+          <button class="chip" data-view="xray">X-Ray Scan</button>
+          <button class="chip" data-view="heart">Heart focus</button>
+          <button class="chip" data-view="lungs">Lungs</button>
+        </div>
+      </section>
+      <section class="panel model-panel">
+        <div class="model-canvas-wrap">
+          <canvas id="body3dCanvas"></canvas>
+          <div class="model-overlay">
+            <div class="model-hint">Drag to rotate · Scroll to zoom</div>
+            <div class="hotspot-list" id="hotspotList"></div>
+          </div>
+        </div>
+        <div class="model-side">
+          <h3>Selected region</h3>
+          <p id="regionInfo">Select a focus or hotspot to see related vitals and guidance.</p>
+          <div class="region-vitals" id="regionVitals"></div>
+        </div>
+      </section>
+
+      <section class="emergency-panel" id="emergency">
+        <div class="emergency-left">
+          <div class="emergency-pulse">!</div>
+          <div>
+            <div class="eyebrow">06 / CRITICAL RESPONSE</div>
+            <h2>Something doesn't feel right?</h2>
+            <p>Get clear, step-by-step emergency guidance. In a real emergency, follow mission protocols and contact Mission Control immediately.</p>
+          </div>
+        </div>
+        <button class="btn btn-danger" id="emergencyBtn">Open emergency guide <span>↗</span></button>
+      </section>
+
+      <footer class="app-footer">
+        <span>✳ ASTRA MED <i>—</i> SPACE HEALTH ASSISTANT</span>
+        <span>DESIGNED FOR CREW RESILIENCE <b>·</b> 2026 NASA CHALLENGE</span>
+      </footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="guideModal" aria-hidden="true">
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" data-close="guideModal" aria-label="Close">×</button>
+      <div class="eyebrow muted">CREW QUICK GUIDE</div>
+      <div class="modal-icon" id="modalIcon">♡</div>
+      <h2 id="modalTitle">Measurement guide</h2>
+      <p id="modalIntro"></p>
+      <ol id="modalSteps" class="modal-steps"></ol>
+      <div class="modal-tip" id="modalTip"></div>
+      <button class="btn btn-primary btn-full" data-close="guideModal">Got it</button>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="treatmentModal" aria-hidden="true">
+    <section class="modal-card treatment-modal" role="dialog" aria-modal="true" aria-labelledby="treatTitle">
+      <button class="modal-close" data-close="treatmentModal" aria-label="Close">×</button>
+      <div class="eyebrow muted">TREATMENT PROTOCOL</div>
+      <div class="treat-illustration" id="treatIllustration"></div>
+      <h2 id="treatTitle">How to take this treatment</h2>
+      <p id="treatIntro"></p>
+      <ol id="treatSteps" class="modal-steps"></ol>
+      <div class="modal-tip" id="treatTip"></div>
+      <button class="btn btn-primary btn-full" data-close="treatmentModal">Understood</button>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="emergencyModal" aria-hidden="true">
+    <section class="modal-card emergency-modal" role="dialog" aria-modal="true" aria-labelledby="emergencyTitle">
+      <button class="modal-close" data-close="emergencyModal" aria-label="Close">×</button>
+      <div class="emergency-modal-icon">!</div>
+      <div class="eyebrow danger-text">PRIORITY 1 / EMERGENCY RESPONSE</div>
+      <h2 id="emergencyTitle">Crew member in distress?</h2>
+      <p>Chest pain, collapse, severe breathing difficulty, or unresponsiveness must be treated as an emergency.</p>
+      <div class="urgent-callout">
+        <strong>ACT NOW</strong>
+        <span>Alert the other crew members and contact Mission Control using the approved emergency communication procedure. Do not wait for dashboard readings.</span>
+      </div>
+      <ol class="modal-steps">
+        <li><b>Check scene safety.</b> Make sure it is safe to approach.</li>
+        <li><b>Check responsiveness and breathing.</b> Follow the crew medical checklist and training.</li>
+        <li><b>Activate emergency support.</b> Report symptoms, time of onset, and available readings to Mission Control.</li>
+        <li><b>Follow real-time medical direction.</b> Use onboard emergency equipment only as trained and instructed.</li>
+        <li><b>Keep monitoring.</b> Record changes and do not leave the crew member alone if it is safe to stay.</li>
+      </ol>
+      <p class="medical-disclaimer">This guide is a training interface, not an autonomous medical decision system. Follow mission-specific medical procedures and professional instructions.</p>
+      <button class="btn btn-danger btn-full" data-close="emergencyModal">I understand — return to dashboard</button>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
 </body>
 </html>

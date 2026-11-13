@@ -1,0 +1,168 @@
+/* login.css: layout and look of the login page (the space scene is in background.css) */
+
+/* ===== 1. Colors ===== */
+:root {
+  --bg: #04061a;
+  --panel: #0b1230b3;
+  --tx: #f1f4ff;
+  --mut: #9aa5d1;
+  --bd: #27336b;
+  --glow: #5a7bff;
+  --bad: #ff7088;
+}
+
+/* ===== 2. Page ===== */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--tx);
+  background: var(--bg);
+  font: 16px/1.6 "Manrope", system-ui, sans-serif;
+}
+
+/* Sparkle symbol with a white-to-blue gradient (used in the logo and the badge) */
+.spark {
+  background: linear-gradient(135deg, #fff, #7f9bff);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+/* ===== 3. Top bar ===== */
+.topbar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 22px clamp(18px, 6vw, 80px);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+.topbar .spark { font-size: 1.6rem; line-height: 1; }
+
+/* ===== 4. Hero (centered content) ===== */
+.hero {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px 60px;
+  text-align: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #cdd8ff;
+  background: #1a2556b3;
+  border: 1px solid #3a4b9f;
+  border-radius: 999px;
+}
+
+h1 {
+  margin: 22px 0 0;
+  font-size: clamp(2.2rem, 6.5vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+/* The app name in the title gets a blue gradient */
+.grad {
+  background: linear-gradient(90deg, #cbd8ff, #6d8cff);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+.lead { max-width: 440px; margin: 16px 0 30px; color: #c7d0f2; }
+.hint { margin: 18px 0 0; font-size: 0.82rem; color: var(--mut); }
+
+/* ===== 5. Login panel (glass card) ===== */
+.panel {
+  width: 100%;
+  max-width: 420px;
+  padding: 24px;
+  text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--bd);
+  border-radius: 18px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 20px 60px #0009, 0 0 50px #5a7bff22;
+}
+
+/* ===== 6. Form ===== */
+label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 600; color: var(--mut); }
+
+input {
+  width: 100%;
+  padding: 13px 15px;
+  font: inherit;
+  color: var(--tx);
+  background: #050a22cc;
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+}
+input::placeholder { color: #66729f; }
+input:focus { outline: none; border-color: var(--glow); box-shadow: 0 0 0 3px #5a7bff40; }
+input.invalid { border-color: var(--bad); }   /* login.js adds this class on a bad username */
+
+.error { min-height: 1.4em; margin: 8px 0 14px; font-size: 0.85rem; color: var(--bad); }
+
+/* ===== 7. Buttons ===== */
+.actions { display: flex; gap: 12px; }
+
+.btn {
+  flex: 1;
+  padding: 12px 16px;
+  font: inherit;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s, border-color 0.2s;
+}
+.btn:active { transform: scale(0.98); }
+.btn:focus-visible { outline: 2px solid #cbd8ff; outline-offset: 2px; }
+
+/* Login: glowing gradient (main action) */
+.primary {
+  color: #0a1030;
+  border: 1px solid #c8d4ff;
+  background: linear-gradient(180deg, #eef2ff, #93a9ff);
+  box-shadow: 0 0 24px #6d8cff77, inset 0 1px 0 #fff;
+}
+.primary:hover { box-shadow: 0 0 34px #6d8cffaa, inset 0 1px 0 #fff; }
+
+/* Skip: dark outline (secondary action) */
+.ghost { color: var(--tx); background: #0c1438b3; border: 1px solid #2f3d82; }
+.ghost:hover { border-color: #6d8cff; }
+
+/* ===== 8. Typewriter effect =====
+   typewriter.js wraps every letter in .ch (hidden), then adds .on one by one.
+   Hidden letters still take up space, so the page never jumps while typing */
+.ch { opacity: 0; }
+.ch.on { opacity: 1; }
+
+/* Blinking cursor. Width and negative margin cancel out, so it takes no space */
+.cursor {
+  display: inline-block;
+  width: 3px;
+  height: 0.9em;
+  margin-right: -3px;
+  vertical-align: -0.1em;
+  background: #9db2ff;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }

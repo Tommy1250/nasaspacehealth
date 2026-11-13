@@ -1,13 +1,404 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login website - nasa health</title>
-    <script src="index.js" defer></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#071426" />
+  <title>ASTRA MED | Crew Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #04061a;
+      --panel: #0b1230b3;
+      --tx: #f1f4ff;
+      --mut: #9aa5d1;
+      --bd: #27336b;
+      --glow: #5a7bff;
+      --bad: #ff7088;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: var(--tx);
+      background: var(--bg);
+      font: 16px/1.6 "Manrope", system-ui, sans-serif;
+    }
+
+    .spark {
+      background: linear-gradient(135deg, #fff, #7f9bff);
+      -webkit-background-clip: text;
+              background-clip: text;
+      color: transparent;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 22px clamp(18px, 6vw, 80px);
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+    .topbar .spark { font-size: 1.6rem; line-height: 1; }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px 60px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #cdd8ff;
+      background: #1a2556b3;
+      border: 1px solid #3a4b9f;
+      border-radius: 999px;
+    }
+
+    h1 {
+      margin: 22px 0 0;
+      min-height: 1.2em;
+      font-size: clamp(2.2rem, 6.5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    .grad {
+      background: linear-gradient(90deg, #cbd8ff, #6d8cff);
+      -webkit-background-clip: text;
+              background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      max-width: 440px;
+      min-height: 3.2em;
+      margin: 16px 0 30px;
+      color: #c7d0f2;
+    }
+
+    .hint { margin: 18px 0 0; font-size: 0.82rem; color: var(--mut); }
+
+    /* ===== Typewriter Cursor ===== */
+    .tw-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.95em;
+      margin-left: 3px;
+      vertical-align: -0.12em;
+      border-radius: 2px;
+      background: #8aa4ff;
+      box-shadow: 0 0 10px #7f9bff;
+      animation: twBlink 0.75s steps(1) infinite;
+    }
+    @keyframes twBlink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    /* ===== Login Panel ===== */
+    .panel {
+      width: 100%;
+      max-width: 420px;
+      padding: 24px;
+      text-align: left;
+      background: var(--panel);
+      border: 1px solid var(--bd);
+      border-radius: 18px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 20px 60px #0009, 0 0 50px #5a7bff22;
+    }
+
+    label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 600; color: var(--mut); }
+
+    input {
+      width: 100%;
+      padding: 13px 15px;
+      font: inherit;
+      color: var(--tx);
+      background: #050a22cc;
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input::placeholder { color: #66729f; }
+    input:focus { outline: none; border-color: var(--glow); box-shadow: 0 0 0 3px #5a7bff40; }
+    input.invalid { border-color: var(--bad); box-shadow: 0 0 0 3px #ff708833; }
+
+    .error { min-height: 1.4em; margin: 8px 0 14px; font-size: 0.85rem; color: var(--bad); }
+
+    .actions { display: flex; gap: 12px; }
+
+    .btn {
+      flex: 1;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s, border-color 0.2s, opacity 0.2s;
+    }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn:active:not(:disabled) { transform: scale(0.98); }
+
+    .primary {
+      color: #0a1030;
+      border: 1px solid #c8d4ff;
+      background: linear-gradient(180deg, #eef2ff, #93a9ff);
+      box-shadow: 0 0 24px #6d8cff77, inset 0 1px 0 #fff;
+    }
+    .primary:hover:not(:disabled) { box-shadow: 0 0 34px #6d8cffaa, inset 0 1px 0 #fff; }
+
+    .ghost { color: var(--tx); background: #0c1438b3; border: 1px solid #2f3d82; }
+    .ghost:hover:not(:disabled) { border-color: #6d8cff; }
+
+    /* ===== Background Scene ===== */
+    .scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .rays {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: min(900px, 100vw);
+      height: 460px;
+      transform: translateX(-50%);
+      background: repeating-linear-gradient(90deg, #7f9bff2e 0 5px, transparent 5px 38px);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 0, #000 0%, transparent 70%);
+              mask-image: radial-gradient(ellipse at 50% 0, #000 0%, transparent 70%);
+    }
+
+    .arc {
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      width: max(1500px, 160vw);
+      aspect-ratio: 1;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: var(--bg, #04061a);
+      box-shadow:
+        inset 0 2px 2px #e4ecff,
+        inset 0 10px 40px #6f8cff99,
+        0 -12px 60px #4565ffcc,
+        0 -50px 160px #2a44b077;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 22%, transparent 48%);
+              mask-image: linear-gradient(to bottom, #000 0%, #000 22%, transparent 48%);
+    }
+
+    .layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 50%;
+      animation: twinkle 4s ease-in-out infinite;
+    }
+
+    .s1 { width: 1px; height: 1px; box-shadow: 57vw 71vh #b9c8ff, 57vw 65vh #fff, 23vw 65vh #b9c8ff, 80vw 78vh #fff, 12vw 57vh #cfe0ff, 18vw 11vh #fff, 76vw 50vh #b9c8ff, 83vw 94vh #fff, 79vw 1vh #fff, 7vw 4vh #fff, 30vw 76vh #fff, 99vw 59vh #cfe0ff, 56vw 75vh #fff, 66vw 29vh #cfe0ff, 63vw 0vh #fff, 58vw 83vh #cfe0ff, 52vw 70vh #fff, 90vw 32vh #cfe0ff, 97vw 29vh #cfe0ff, 3vw 8vh #fff, 51vw 13vh #cfe0ff, 49vw 8vh #fff, 87vw 0vh #fff, 26vw 6vh #b9c8ff, 48vw 90vh #b9c8ff, 53vw 9vh #fff, 99vw 86vh #cfe0ff, 43vw 11vh #cfe0ff, 42vw 1vh #b9c8ff, 97vw 15vh #fff, 31vw 90vh #fff, 1vw 7vh #b9c8ff, 62vw 22vh #fff, 57vw 65vh #fff, 93vw 98vh #fff, 53vw 82vh #b9c8ff, 14vw 50vh #b9c8ff, 27vw 0vh #cfe0ff, 75vw 38vh #fff, 26vw 23vh #b9c8ff, 77vw 82vh #fff, 5vw 18vh #fff, 56vw 33vh #fff, 98vw 78vh #cfe0ff, 37vw 49vh #fff, 9vw 11vh #fff, 74vw 81vh #fff, 1vw 76vh #cfe0ff, 47vw 79vh #b9c8ff, 16vw 75vh #b9c8ff, 73vw 17vh #b9c8ff, 23vw 80vh #fff, 39vw 29vh #fff, 92vw 24vh #fff, 94vw 80vh #fff, 87vw 49vh #b9c8ff, 77vw 10vh #b9c8ff, 6vw 13vh #fff, 4vw 65vh #cfe0ff, 30vw 94vh #b9c8ff, 32vw 53vh #b9c8ff, 37vw 66vh #fff, 92vw 8vh #fff, 29vw 61vh #fff, 35vw 27vh #fff, 95vw 2vh #fff, 34vw 52vh #b9c8ff, 31vw 7vh #fff, 22vw 36vh #cfe0ff, 67vw 73vh #fff, 11vw 46vh #fff, 57vw 42vh #fff, 75vw 4vh #fff, 60vw 45vh #cfe0ff, 4vw 2vh #fff, 61vw 8vh #cfe0ff, 40vw 17vh #fff, 9vw 57vh #cfe0ff, 94vw 5vh #fff, 43vw 45vh #fff; }
+    .s2 { width: 2px; height: 2px; box-shadow: 87vw 60vh #fff, 53vw 3vh #b9c8ff, 73vw 1vh #b9c8ff, 48vw 74vh #fff, 77vw 9vh #fff, 11vw 81vh #fff, 32vw 53vh #cfe0ff, 49vw 94vh #b9c8ff, 56vw 59vh #fff, 66vw 96vh #fff, 39vw 76vh #fff, 61vw 2vh #fff, 89vw 14vh #b9c8ff, 99vw 78vh #b9c8ff, 32vw 1vh #cfe0ff, 38vw 18vh #fff, 66vw 21vh #cfe0ff, 84vw 56vh #b9c8ff, 30vw 41vh #b9c8ff, 85vw 32vh #fff, 81vw 55vh #fff, 27vw 49vh #fff, 74vw 40vh #fff, 17vw 17vh #b9c8ff, 44vw 5vh #fff, 35vw 21vh #fff, 57vw 60vh #cfe0ff, 27vw 52vh #b9c8ff, 80vw 66vh #b9c8ff, 86vw 40vh #b9c8ff; animation-duration: 6s; animation-delay: 1s; }
+    .s3 { width: 3px; height: 3px; box-shadow: 41vw 9vh #fff, 35vw 77vh #fff, 86vw 90vh #cfe0ff, 73vw 45vh #cfe0ff, 83vw 72vh #fff, 82vw 17vh #b9c8ff, 58vw 24vh #fff, 98vw 34vh #fff, 99vw 18vh #fff, 80vw 14vh #b9c8ff; animation-duration: 3s; animation-delay: 2s; }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50%      { opacity: 0.95; }
+    }
+
+    .shooting {
+      position: absolute;
+      top: 10%;
+      left: 5%;
+      width: 130px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #fff);
+      opacity: 0;
+      transform: rotate(35deg);
+      animation: shoot 9s linear infinite 3s;
+    }
+
+    @keyframes shoot {
+      0%   { opacity: 0; transform: rotate(35deg) translateX(0); }
+      3%   { opacity: 1; }
+      12%  { opacity: 0; transform: rotate(35deg) translateX(750px); }
+      100% { opacity: 0; transform: rotate(35deg) translateX(750px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .layer, .shooting { animation: none; }
+      .layer { opacity: 0.7; }
+      .shooting { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <h1>Login website</h1>
+
+  <div class="scene" aria-hidden="true">
+    <div class="rays"></div>
+    <div class="arc"></div>
+    <span class="layer s1"></span>
+    <span class="layer s2"></span>
+    <span class="layer s3"></span>
+    <span class="shooting"></span>
+  </div>
+
+  <header class="topbar">
+    <span class="spark" aria-hidden="true">✦</span>
+    AstroHealth
+  </header>
+
+  <main class="hero">
+    <span class="badge"><span class="spark" aria-hidden="true">✦</span> Crew Health Monitor</span>
+
+    <h1>
+      <span id="twTitle1" data-text="Welcome to "></span><span class="grad" id="twTitle2" data-text="AstroHealth"></span>
+    </h1>
+    <p class="lead" id="twLead" data-text="Track astronaut health and the five hazards of spaceflight in real time."></p>
+
+    <div class="panel">
+      <form id="loginForm" novalidate>
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" maxlength="24" autocomplete="username" placeholder="e.g. Commander Sara" autofocus>
+
+        <p class="error" id="error" role="alert"></p>
+
+        <div class="actions">
+          <button type="submit" class="btn primary" id="loginSubmitBtn">Login</button>
+          <button type="button" class="btn ghost" id="skipBtn">Skip</button>
+        </div>
+      </form>
+    </div>
+
+    <p class="hint">Skip to continue as a guest.</p>
+  </main>
+
+  <script>
+    (() => {
+      // ===== 1. Backend Authentication Logic =====
+      const form = document.getElementById('loginForm');
+      const usernameInput = document.getElementById('username');
+      const errorEl = document.getElementById('error');
+      const loginBtn = document.getElementById('loginSubmitBtn');
+      const skipBtn = document.getElementById('skipBtn');
+
+      async function authenticate(username) {
+        errorEl.textContent = '';
+        usernameInput.classList.remove('invalid');
+        loginBtn.disabled = true;
+        skipBtn.disabled = true;
+
+        try {
+          const response = await fetch('/auth/login', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+          });
+
+          let data = {};
+          try { data = await response.json(); } catch (_) {}
+
+          if (!response.ok) {
+            throw new Error(data.msg || `Login failed (${response.status})`);
+          }
+
+          localStorage.setItem('astro_username', data.username || username);
+          window.location.assign('/');
+        } catch (err) {
+          errorEl.textContent = err.message || 'Unable to connect to Mission Control. Try again.';
+          usernameInput.classList.add('invalid');
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Login';
+          skipBtn.disabled = false;
+          skipBtn.textContent = 'Skip';
+        }
+      }
+
+      usernameInput.addEventListener('input', () => {
+        usernameInput.classList.remove('invalid');
+        if (errorEl.textContent) errorEl.textContent = '';
+      });
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const username = usernameInput.value.trim();
+
+        if (!username) {
+          errorEl.textContent = 'Please enter a crew username or click Skip.';
+          usernameInput.classList.add('invalid');
+          usernameInput.focus();
+          return;
+        }
+
+        loginBtn.textContent = 'Connecting…';
+        await authenticate(username);
+      });
+
+      skipBtn.addEventListener('click', async () => {
+        skipBtn.textContent = 'Entering…';
+        await authenticate('Guest Crew');
+      });
+
+      // ===== 2. Smooth Typewriter Engine =====
+      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const t1 = document.getElementById('twTitle1');
+      const t2 = document.getElementById('twTitle2');
+      const lead = document.getElementById('twLead');
+
+      async function typeInto(el, text, speed, cursor) {
+        el.after(cursor);
+        for (let i = 0; i < text.length; i++) {
+          el.textContent += text[i];
+          await sleep(speed);
+        }
+      }
+
+      async function startTypewriter() {
+        if (reduceMotion) {
+          t1.textContent = t1.dataset.text;
+          t2.textContent = t2.dataset.text;
+          lead.textContent = lead.dataset.text;
+          return;
+        }
+
+        const cursor = document.createElement('span');
+        cursor.className = 'tw-cursor';
+
+        await sleep(250);
+        await typeInto(t1, t1.dataset.text, 55, cursor);
+        await typeInto(t2, t2.dataset.text, 65, cursor);
+        await sleep(200);
+        await typeInto(lead, lead.dataset.text, 22, cursor);
+      }
+
+      startTypewriter();
+    })();
+  </script>
 </body>
 </html>
