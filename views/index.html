@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#071426" />
-  <title>ASTRA MED | Crew Health Dashboard</title>
+  <meta name="theme-color" content="#04061a" />
+  <title>AstroHealth | Crew Health Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css" />
   
   <!-- Three.js + GLTFLoader + Decoders (Draco & Meshopt) -->
@@ -22,7 +22,7 @@
 
   <div class="app-layout">
     <aside class="sidebar" id="sidebar">
-      <a class="brand" href="/"><span class="brand-mark">✳</span><span>ASTRA<span class="brand-light">MED</span></span></a>
+      <a class="brand" href="/"><span class="brand-mark">✦</span><span>Astro<span class="brand-light">Health</span></span></a>
       <div class="sidebar-label">WORKSPACE</div>
       <nav class="side-nav" aria-label="Main navigation">
         <a class="nav-link active" href="#overview"><span>▦</span> Overview</a>
@@ -297,7 +297,7 @@
       </section>
 
       <footer class="app-footer">
-        <span>✳ ASTRA MED <i>—</i> SPACE HEALTH ASSISTANT</span>
+        <span>✦ AstroHealth <i>—</i> SPACE HEALTH ASSISTANT</span>
         <span>DESIGNED FOR CREW RESILIENCE <b>·</b> 2026 NASA CHALLENGE</span>
       </footer>
     </main>
@@ -353,5 +353,75 @@
   </div>
 
   <div class="toast" id="toast" role="status"></div>
+  <!-- Sidebar highlight: marks the item you clicked or the section you are viewing.
+       Display only: it does not touch the data or backend logic in index.js -->
+  <script>
+  (function () {
+    var links = Array.from(document.querySelectorAll('.side-nav .nav-link[href^="#"]'));
+    if (!links.length) return;
+
+    var overview = links[0];                       // first link = Overview (its target wraps the whole page)
+    var healthLink = links.find(function (a) { return a.getAttribute('href') === '#health-check'; });
+    var guidesLink = links.find(function (a) { return a.getAttribute('href') === '#guides'; });
+    var emergencyLink = links.find(function (a) { return a.getAttribute('href') === '#emergency'; });
+    var lockUntil = 0;                             // pause the scroll watcher right after a click
+    var queued = false;
+
+    function targetOf(link) { return document.getElementById(link.getAttribute('href').slice(1)); }
+
+    function setActive(link) {
+      links.forEach(function (a) {
+        var on = a === link;
+        a.classList.toggle('active', on);
+        if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+      });
+    }
+
+    // Decide which item matches the part of the page currently on screen
+    function update() {
+      if (Date.now() < lockUntil) return;
+      var line = window.innerHeight * 0.4;
+      var current = overview;
+      links.forEach(function (a) {
+        if (a === overview) return;
+        var el = targetOf(a);
+        if (el && el.getBoundingClientRect().top <= line) current = a;
+      });
+
+      // Health check and Crew guides sit side by side: keep whichever one is already selected
+      if (current === healthLink || current === guidesLink) {
+        current = links.find(function (a) { return a.classList.contains('active'); }) === guidesLink ? guidesLink : healthLink;
+      }
+
+      // At the very bottom of the page, highlight Emergency
+      var em = document.getElementById('emergency');
+      var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      if (atBottom && em && emergencyLink && em.getBoundingClientRect().top < window.innerHeight) current = emergencyLink;
+
+      setActive(current);
+    }
+
+    function queueUpdate() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; update(); });
+    }
+
+    // Clicking an item highlights it right away
+    links.forEach(function (a) {
+      a.addEventListener('click', function () {
+        setActive(a);
+        lockUntil = Date.now() + 900;              // wait for the smooth scroll to finish
+      });
+    });
+
+    window.addEventListener('scroll', queueUpdate, { passive: true });
+    window.addEventListener('resize', queueUpdate);
+
+    // Open the page on a link such as index.html#treatments
+    var fromHash = links.find(function (a) { return a.getAttribute('href') === location.hash; });
+    if (fromHash) { setActive(fromHash); lockUntil = Date.now() + 900; } else { update(); }
+  })();
+  </script>
 </body>
 </html>

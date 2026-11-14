@@ -3,7 +3,6 @@
   const $$ = (selector) => [...document.querySelectorAll(selector)];
   const isLogin = location.pathname === '/login';
 
-  // ---------- 0. حقن محرك الأنيميشن الكامل للواجهة والبطاقات والـ SVG ----------
   if (!document.getElementById('astramed-motion-engine')) {
     const styleEl = document.createElement('style');
     styleEl.id = 'astramed-motion-engine';

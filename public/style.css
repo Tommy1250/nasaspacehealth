@@ -86,5 +86,244 @@
   border-radius:14px 0 0 14px;pointer-events:none;
 }
 @media (max-width:900px){
-  .model-load-status{border-radius:14px 14px 0 0}
+  .model-load-status{border-radius:14px 14px 0 0};
+  .sidebar {overflow-y: scroll};
 }
+
+
+/* =====================================================================
+   UX IMPROVEMENTS (visual only, no HTML or JS changes)
+   Added on top of the original styles. To undo any part, delete its block.
+   ===================================================================== */
+
+/* 1. Readability: lighter secondary text and larger small text */
+:root{--muted:#9db1c8}
+body{font-size:15px}
+html{scroll-padding-top:16px}
+.eyebrow{font-size:11px}
+.eyebrow.muted{color:#9bb0c8}
+.breadcrumb,.system-status,.top-date{font-size:11px}
+.breadcrumb,.top-date{color:#93a9c2}
+.poll-status{font-size:12px}
+.subheading{font-size:14px;color:#a3b6cc}
+.welcome-row h1{font-size:clamp(24px,2.6vw,34px)}
+.environment-select label{font-size:10px;color:#9db1c8}
+.environment-select select{font-size:13px;padding:12px 32px 12px 12px;background-position:calc(100% - 14px) 19px,calc(100% - 10px) 19px}
+.btn{font-size:13px}
+.data-note{font-size:12px;color:#93a9c1}
+.app-footer{font-size:10px;color:#8099b3}
+
+/* 2. Top bar scrolls away with the page, so it never covers the content */
+.topbar{position:static;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+
+/* 3. Sidebar: larger links, clearer active item, emergency link stands out.
+   (The original file had a stray ";" that disabled sidebar scrolling, fixed here) */
+.sidebar{overflow-y:auto}
+.sidebar-label{font-size:10px;color:#8ba3bd}
+.nav-link{font-size:14px;padding:13px 12px}
+.nav-link.active{background:rgba(89,184,220,.14);color:#fff;font-weight:600}
+.nav-link.emergency-nav{background:rgba(255,98,111,.1);border:1px solid rgba(255,98,111,.28);color:#ff9aa2}
+.mission-card .sidebar-label{font-size:10px}
+.mission-card strong{font-size:14px}
+.mission-card>span{font-size:12px;color:#97adc5}
+.mission-card small{font-size:10px;color:#8ba3bd}
+.user-meta strong{font-size:13px}
+.user-meta span{font-size:11px;color:#97adc5}
+.avatar{width:36px;height:36px;font-size:12px}
+.icon-button{min-width:40px;min-height:40px}
+@media(max-height:900px){.sidebar .brand{padding-bottom:22px}.mission-card{padding:12px}.mission-icon{display:none}}
+@media(max-height:760px){.mission-card{display:none}}
+
+/* 4. Alert banner: clearer hierarchy, calmer buttons, no pulsing */
+.alert-banner{padding:16px 18px;gap:16px;align-items:flex-start}
+.alert-symbol{flex-shrink:0;width:38px;height:38px}
+.alert-copy{gap:6px}
+.alert-copy strong{font-size:14px;line-height:1.4}
+.alert-copy span{font-size:13px;line-height:1.55;color:#a9cfc9}
+.banner-tag{font-size:10px;padding:6px 10px;flex-shrink:0}
+.banner-warning .alert-copy span{color:#f0c98f}
+.alert-banner.banner-critical{background:linear-gradient(100deg,rgba(255,98,111,.17),rgba(90,30,48,.2))!important;border:1px solid rgba(255,98,111,.55)!important;box-shadow:inset 4px 0 0 var(--danger);animation:none!important}
+.alert-banner.banner-critical .alert-symbol{background:rgba(255,98,111,.18);color:#ff8a94}
+.alert-banner.banner-critical .alert-copy strong{color:#ffe5e8}
+.alert-banner.banner-critical .alert-copy span{color:#ffc9ce}
+.alert-banner.banner-critical .banner-tag{color:#ffb3ba;border-color:rgba(255,98,111,.5)}
+.alert-copy span>div:last-child{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px!important}
+.alert-copy .btn[data-open-proto]{margin:0!important;padding:9px 14px!important;font-size:12.5px!important;line-height:1.35;text-align:left;white-space:normal;gap:8px;min-height:40px}
+.alert-copy .btn-danger[data-open-proto]{background:rgba(255,98,111,.16);color:#ffe3e6;border:1px solid rgba(255,98,111,.55);box-shadow:none}
+.alert-copy .btn-danger[data-open-proto]:hover{background:#ff6875;color:#fff}
+.alert-copy .btn-ghost[data-open-proto]{border-color:rgba(245,189,103,.4);color:#ffe4b8}
+
+/* 5. Metric cards: bigger text, tabular numbers (no jitter on live updates) */
+.metric-card{min-height:0;padding:18px 18px 16px;border-radius:12px}
+.metric-top{gap:10px;flex-wrap:wrap;row-gap:8px}
+.metric-icon,.guide-icon{width:32px;height:32px;font-size:18px;border-radius:9px}
+.metric-label{font-size:11px;letter-spacing:.9px;color:#a3b7cd}
+.metric-value{margin:14px 0 8px}
+.metric-value strong{font-size:36px;letter-spacing:-1.2px;font-variant-numeric:tabular-nums}
+.metric-value span{font-size:12px;color:#95abc3}
+.metric-bottom{font-size:12px;color:#93a9c1;align-items:center}
+.metric-range{font-size:11.5px;color:#b3c3d4;white-space:nowrap}
+.metric-range i{color:#8aa1ba}
+.resp-rate{font-size:13px}
+
+/* 6. Status labels: pill with an icon AND text, so color is never the only signal */
+.metric-state{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.8px;padding:4px 9px;border-radius:999px;border:1px solid currentColor;background:rgba(255,255,255,.04);white-space:nowrap}
+.metric-state::before{content:"–"}
+.metric-state.state-good{background:rgba(98,215,176,.1)}
+.metric-state.state-good::before{content:"✓"}
+.metric-state.state-warn{background:rgba(245,189,103,.12)}
+.metric-state.state-warn::before{content:"!";font-weight:900}
+.metric-state.state-critical{background:rgba(255,98,111,.14)}
+.metric-state.state-critical::before{content:"⚠"}
+
+/* 7. Critical cards come first, and both critical and warning cards stand out without pulsing */
+.metrics-grid .metric-card.card-is-critical{order:-1;animation:none!important;border-color:rgba(255,98,111,.7)!important;background:linear-gradient(145deg,rgba(70,28,44,.9),rgba(24,30,52,.96));box-shadow:inset 0 3px 0 var(--danger)}
+.metrics-grid .metric-card.card-is-warn{animation:none!important;border-color:rgba(245,189,103,.55)!important;background:linear-gradient(145deg,rgba(66,52,34,.7),rgba(19,35,54,.96));box-shadow:inset 0 3px 0 var(--amber)}
+
+/* 8. One status bar per card (the extra decorative bars are hidden) with a dot at the current value */
+.metric-track,.sleep-track,.temp-scale{display:none}
+.danger-bar{height:6px;border-radius:3px;margin-top:12px;overflow:visible;background:rgba(255,255,255,.08)}
+.danger-bar i{position:relative;border-radius:3px}
+.danger-bar i::after{content:"";position:absolute;right:0;top:50%;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--bg);transform:translate(50%,-50%)}
+.danger-bar:not(.bar-good):not(.bar-warn):not(.bar-critical) i::after{display:none}
+
+/* 9. Section headings, limits panel, panels */
+.section-heading h2{font-size:22px}
+.panel-heading h2{font-size:19px}
+.text-button{font-size:13px;padding:8px 10px;border-radius:8px}
+.text-button:hover{background:rgba(86,212,232,.08)}
+.limits-panel{padding:20px 22px}
+.limit-item strong{font-size:14px}
+.lim-ok{font-size:13px}
+.lim-crit{font-size:12.5px}
+.panel{padding:24px}
+.panel-description{font-size:13px;color:#9db1c8}
+
+/* 10. Daily check form: bigger fields, no ugly number spinners */
+.field label{font-size:12px;color:#c3d1e2;margin-bottom:7px}
+.field label small{font-size:11px;color:#8aa1ba}
+.field input{height:44px;font-size:15px;padding:0 12px;border-radius:9px}
+.field input::placeholder{color:#7c93ad}
+.field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.field input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.form-actions .btn{padding:12px 18px;font-size:13px}
+.save-message{font-size:12px}
+
+/* 11. Guides and treatments */
+.guide-item{padding:14px 6px;border-radius:8px}
+.guide-item:hover{background:rgba(86,212,232,.05)}
+.guide-item strong{font-size:14px}
+.guide-item small{font-size:12px;color:#9db1c8}
+.guide-arrow{color:#93a9c2}
+.treatment-card h3{font-size:17px}
+.treatment-card p{font-size:14px}
+.btn-ghost{font-size:13px;padding:10px 14px;min-height:42px;justify-content:center}
+
+/* 12. 3D body map: the buttons inside the canvas duplicated the chips above, so they are hidden */
+.hotspot-list{display:none}
+.chip{font-size:13px;padding:8px 14px}
+.model-hint{font-size:12px}
+.model-side h3{font-size:18px}
+.model-side p{font-size:14px}
+.region-vitals div{font-size:14px;padding:12px 14px}
+
+/* 13. Emergency area, footer, modals, toast */
+.emergency-panel h2{font-size:19px}
+.emergency-panel p{font-size:13px;color:#c9a3ae}
+.emergency-panel .btn{font-size:13px;padding:14px 20px}
+.modal-card h2{font-size:25px}
+.modal-card>p,.modal-steps{font-size:14px}
+.modal-tip,.urgent-callout{font-size:13px}
+.urgent-callout strong{font-size:12px}
+.medical-disclaimer{font-size:12px!important}
+.modal-close{width:44px;height:44px;right:12px;top:8px}
+.toast{font-size:13px}
+
+/* 14. Keyboard focus is always visible */
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+/* 15. Small screens: one card per row, comfortable sizes */
+@media(max-width:1100px){.metric-value strong{font-size:32px}}
+@media(max-width:720px){
+  .welcome-row h1{font-size:26px}
+  .panel{padding:18px}
+  .metric-value strong{font-size:30px}
+  .metric-label{font-size:10.5px;letter-spacing:.5px}
+  .metric-bottom{font-size:11px}
+  .metric-range{font-size:10.5px}
+  .field input{font-size:16px}
+}
+@media(max-width:560px){.metrics-grid{grid-template-columns:1fr}}
+
+/* 16. Reduced motion: stop looping animations for people who prefer it */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .metric-card .danger-bar i,.metric-card .track-fill,.resp-wave{animation:none!important}
+  .metric-card{animation:none!important}
+}
+
+/* =====================================================================
+   THEME + ICON RAIL (matches the AstroHealth login design)
+   Visual only. Delete this whole block to go back to the previous look.
+   ===================================================================== */
+
+/* A. Colors and font: same deep-space palette as the login page */
+:root{--bg:#04061a;--bg2:#070c26;--panel:#0b1230;--panel2:#111b45;--line:rgba(120,145,255,.17);--text:#f1f4ff;--muted:#a3b2d8;--cyan:#8fa6ff;--blue:#6d8cff;--violet:#b9a5ff;--font:'Manrope',system-ui,sans-serif;--display:'Manrope',system-ui,sans-serif}
+body{background:radial-gradient(700px 450px at 15% 0,rgba(58,42,122,.4),transparent),radial-gradient(650px 420px at 95% 100%,rgba(29,78,138,.33),transparent),var(--bg);background-attachment:fixed}
+.app-layout{position:relative;z-index:1}
+
+/* B. Space backdrop behind the page: light rays (html), glowing horizon (body::before), stars (body::after) */
+html::before{content:"";position:fixed;z-index:0;top:0;left:50%;width:min(900px,100vw);height:420px;transform:translateX(-50%);pointer-events:none;background:repeating-linear-gradient(90deg,rgba(127,155,255,.14) 0 5px,transparent 5px 38px);-webkit-mask-image:radial-gradient(ellipse at 50% 0,#000,transparent 70%);mask-image:radial-gradient(ellipse at 50% 0,#000,transparent 70%)}
+body::before{content:"";position:fixed;z-index:0;top:150px;left:50%;width:max(1500px,160vw);aspect-ratio:1;transform:translateX(-50%);border-radius:50%;pointer-events:none;background:var(--bg);box-shadow:inset 0 2px 2px rgba(228,236,255,.8),inset 0 10px 40px rgba(111,140,255,.45),0 -12px 60px rgba(69,101,255,.55),0 -50px 160px rgba(42,68,176,.35);-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 22%,transparent 48%);mask-image:linear-gradient(to bottom,#000 0,#000 22%,transparent 48%)}
+body::after{content:"";position:fixed;z-index:0;inset:0;pointer-events:none;background-repeat:no-repeat;background-image:radial-gradient(1px 1px at 16.5% 69.0%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 28.1% 84.3%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 80.8% 51.2%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 52.8% 78.8%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 37.1% 58.5%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 14.5% 75.1%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 69.4% 43.7%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 77.1% 40.7%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 3.4% 32.9%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 69.4% 64.9%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 2.3% 74.1%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 12.5% 92.8%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 16.1% 72.8%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 48.5% 18.7%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 47.0% 82.0%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 78.0% 20.9%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 75.5% 76.3%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 98.9% 7.1%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 47.6% 82.7%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 34.1% 14.6%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 41.0% 36.5%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 50.1% 31.8%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 38.7% 2.7%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 15.9% 71.6%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 0.3% 7.0%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 74.8% 22.2%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 31.9% 98.0%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 18.1% 17.0%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 83.4% 33.2%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 93.0% 24.6%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 6.6% 81.4%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 37.5% 68.3%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 52.0% 65.8%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 40.7% 98.9%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1px 1px at 59.1% 88.3%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 50.6% 66.7%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1px 1px at 16.2% 6.9%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1px 1px at 77.4% 48.3%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1.5px 1.5px at 5.2% 25.8%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1.5px 1.5px at 3.5% 24.9%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1.5px 1.5px at 6.9% 33.8%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1.5px 1.5px at 98.3% 74.6%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1.5px 1.5px at 4.9% 14.0%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1.5px 1.5px at 52.6% 72.9%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(1.5px 1.5px at 95.3% 89.9%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1.5px 1.5px at 79.5% 88.1%,rgba(255,255,255,1) 99%,transparent), radial-gradient(1.5px 1.5px at 77.3% 48.4%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1.5px 1.5px at 30.8% 53.4%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1.5px 1.5px at 13.9% 72.1%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(1.5px 1.5px at 68.5% 95.4%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(2px 2px at 26.4% 32.6%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(2px 2px at 85.2% 58.4%,rgba(255,255,255,0.8) 99%,transparent), radial-gradient(2px 2px at 68.3% 75.2%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(2px 2px at 13.4% 9.5%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(2px 2px at 18.7% 64.2%,rgba(255,255,255,0.6) 99%,transparent), radial-gradient(2px 2px at 7.2% 11.9%,rgba(255,255,255,0.8) 99%,transparent);animation:starTwinkle 5s ease-in-out infinite}
+@keyframes starTwinkle{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* C. Logo: sparkle icon with a white-to-blue gradient, no box */
+.brand{font-weight:800;letter-spacing:.3px}
+.brand-mark{border:0;border-radius:0;box-shadow:none;font-size:30px;line-height:1;background:linear-gradient(135deg,#fff,#7f9bff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand-light{font-weight:inherit;color:inherit}
+
+/* D. Glass look for sidebar, top bar, cards and panels */
+.sidebar{background:rgba(5,8,30,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.metric-card{background:linear-gradient(145deg,rgba(17,27,69,.78),rgba(9,14,40,.82));border-color:var(--line)}
+.panel{background:linear-gradient(145deg,rgba(17,27,69,.7),rgba(9,14,40,.78));border-color:var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.limits-panel,.treatment-card{background:rgba(11,18,48,.66);border-color:var(--line)}
+.limit-item,.chip,.region-vitals div{background:rgba(17,27,69,.7)}
+.model-canvas-wrap{background:radial-gradient(ellipse at center,#14206a 0,#070c26 70%)}
+.modal-card{background:#0b1230;border-color:rgba(120,145,255,.25)}
+.mission-card{background:linear-gradient(145deg,rgba(17,27,69,.8),rgba(9,14,40,.85))}
+.nav-link:hover,.nav-link.active{background:rgba(109,140,255,.15)}
+.panel-icon,.modal-icon{background:rgba(143,166,255,.12)}
+.eyebrow{color:#a9baff}
+.field input,.environment-select select{background-color:#050a22;border-color:#27336b}
+.field input:focus{border-color:#6d8cff;box-shadow:0 0 0 3px rgba(90,123,255,.25)}
+.welcome-row h1{font-weight:800;letter-spacing:-1.2px}
+.welcome-row h1 span{background:linear-gradient(90deg,#cbd8ff,#6d8cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn-primary{color:#0a1030;background:linear-gradient(180deg,#eef2ff,#93a9ff);box-shadow:0 0 24px rgba(109,140,255,.4),inset 0 1px 0 #fff}
+.btn-primary:hover{filter:none;box-shadow:0 0 34px rgba(109,140,255,.65),inset 0 1px 0 #fff}
+.metrics-grid .metric-card:not(.card-is-critical):not(.card-is-warn):hover,.treatments-grid .treatment-card:hover{border-color:rgba(143,166,255,.5)!important;box-shadow:0 12px 28px rgba(2,4,20,.6),0 0 24px rgba(109,140,255,.15)}
+
+/* E. Sidebar as an icon rail on desktop: icons only, full menu on mouse hover.
+   (On phones the original slide-in menu is unchanged.) The sidebar overlays the page when open, so nothing shifts. */
+@media(min-width:721px){
+  .sidebar{width:72px;padding:24px 12px 16px;overflow-x:hidden;overflow-y:auto;white-space:nowrap;transition:width .25s ease,box-shadow .25s}
+  .sidebar:hover{width:244px;box-shadow:20px 0 50px rgba(0,0,0,.45)}
+  .main-content{margin-left:72px}
+  .sidebar .brand{padding:0 7px 30px}
+  .sidebar .brand>span:last-child{max-width:0;opacity:0;overflow:hidden;transition:max-width .25s,opacity .2s}
+  .sidebar:hover .brand>span:last-child{max-width:160px;opacity:1}
+  .sidebar-label{opacity:0;transition:opacity .2s}
+  .sidebar:hover .sidebar-label{opacity:1}
+  .nav-link{font-size:0;gap:0;justify-content:center;padding:13px 0}
+  .nav-link>span{font-size:19px;width:24px}
+  .sidebar:hover .nav-link{font-size:14px;gap:13px;justify-content:flex-start;padding:13px 12px}
+  .mission-card{max-height:0;padding:0 13px;margin-bottom:0;border-width:0;opacity:0;overflow:hidden;transition:max-height .25s,opacity .2s,padding .25s}
+  .sidebar:hover .mission-card{max-height:220px;padding:15px 13px;margin-bottom:18px;border-width:1px;opacity:1}
+  .sidebar-user{justify-content:center}
+  .user-meta,.sidebar-user .icon-button{display:none}
+  .sidebar:hover .sidebar-user{justify-content:flex-start}
+  .sidebar:hover .user-meta{display:grid}
+  .sidebar:hover .sidebar-user .icon-button{display:inline-block}
+}
+
+@media(prefers-reduced-motion:reduce){body::after{animation:none}.sidebar{transition:none}}
